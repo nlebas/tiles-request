@@ -42,6 +42,7 @@ import org.easymock.EasyMock;
  *
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("deprecation")
 public class WildcardPortletApplicationContextTest extends TestCase {
 
     /**

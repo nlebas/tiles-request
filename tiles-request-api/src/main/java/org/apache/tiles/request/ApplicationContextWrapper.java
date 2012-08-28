@@ -29,7 +29,9 @@ import java.util.Map;
  * Delegate for ease of customization.
  *
  * @version $Rev: 933750 $ $Date: 2010-04-13 21:16:06 +0200 (Tue, 13 Apr 2010) $
+ * @deprecated this class has not proven useful.
  */
+@Deprecated
 public class ApplicationContextWrapper implements ApplicationContext {
 
     /**

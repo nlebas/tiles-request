@@ -42,6 +42,7 @@ import javax.servlet.ServletContext;
  *
  * @version $Rev$ $Date$
  */
+@SuppressWarnings("deprecation")
 public class WildcardServletApplicationContextTest extends TestCase {
 
     /**

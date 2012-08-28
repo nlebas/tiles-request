@@ -34,6 +34,8 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.tiles.request.ApplicationResourceLocator;
+import org.apache.tiles.request.LocatedResource;
 
 /**
  * A {@link PostfixedApplicationResource} that can be accessed through a URL.
@@ -41,14 +43,16 @@ import org.slf4j.LoggerFactory;
  * @version $Rev$ $Date$
  */
 
-public class URLApplicationResource extends PostfixedApplicationResource {
+public class URLApplicationResource extends PostfixedApplicationResource implements LocatedResource {
     private static final Logger LOG = LoggerFactory.getLogger(URLApplicationResource.class);
 
     /** the URL where the contents can be found. */
     private URL url;
     /** if the URL matches a file, this is the file. */
     private File file;
-
+    /** the Locator that found the resource */ 
+    private ApplicationResourceLocator source;
+    
     /**
      * Creates a URLApplicationResource for the specified path that can be accessed through the specified URL.
      *
@@ -56,11 +60,16 @@ public class URLApplicationResource extends PostfixedApplicationResource {
      * @param url the URL where the contents can be found.
      */
     public URLApplicationResource(String localePath, URL url) {
+        this(localePath, url, null);
+    }
+
+    public URLApplicationResource(String localePath, URL url, ApplicationResourceLocator source) {
         super(localePath);
         this.url = url;
         if ("file".equals(url.getProtocol())) {
             file = getFile(url);
         }
+        this.source = source;
     }
 
     /**
@@ -125,5 +134,10 @@ public class URLApplicationResource extends PostfixedApplicationResource {
 
     protected File getFile(){
         return file;
+    }
+
+    @Override
+    public ApplicationResourceLocator getSource() {
+        return source;
     }
 }

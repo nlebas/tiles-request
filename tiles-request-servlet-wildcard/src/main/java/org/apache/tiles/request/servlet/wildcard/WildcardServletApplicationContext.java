@@ -42,7 +42,9 @@ import org.springframework.web.context.support.ServletContextResourcePatternReso
  * can resolve resources even using wildcards.
  *
  * @version $Rev$ $Date$
+ * @deprecated register SpringResourceLocator(ServletContextResourcePatternResolver) into ServletApplicationContext instead
  */
+@Deprecated
 public class WildcardServletApplicationContext extends ServletApplicationContext {
 
     /**
@@ -99,8 +101,7 @@ public class WildcardServletApplicationContext extends ServletApplicationContext
                     url = resources[i].getURL();
                     resourceList.add(new URLApplicationResource(url.toExternalForm(), url));
                 } catch (IOException e) {
-                    // shouldn't happen with the kind of resources we're using
-                    throw new IllegalArgumentException("no URL for " + resources[i].toString(), e);
+                    // the resource does not exist: ignore it
                 }
             }
         }

@@ -113,8 +113,9 @@ public final class ServletUtil {
      * servlet-based.
      */
     public static ServletContext getServletContext(ApplicationContext applicationContext) {
-        if (applicationContext instanceof ServletApplicationContext) {
-            return (ServletContext) ((ServletApplicationContext) applicationContext).getContext();
+        Object context = applicationContext.getContext();
+        if (context instanceof ServletContext) {
+            return (ServletContext) context;
         }
 
         throw new NotAServletEnvironmentException("Not a Servlet-based environment");
