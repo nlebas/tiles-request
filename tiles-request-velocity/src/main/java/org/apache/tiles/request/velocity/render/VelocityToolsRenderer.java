@@ -22,6 +22,7 @@
 package org.apache.tiles.request.velocity.render;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.tiles.request.ApplicationContext;
 import org.apache.tiles.request.Request;
@@ -30,6 +31,7 @@ import org.apache.tiles.request.render.Renderer;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.tools.ToolContext;
 import org.apache.velocity.tools.ToolManager;
 import org.apache.velocity.tools.config.ConfigurationUtils;
 import org.apache.velocity.tools.config.FactoryConfiguration;
@@ -40,7 +42,7 @@ import org.apache.velocity.tools.config.FactoryConfiguration;
  * @since 3.0.0
  */
 
-public class VelocityEngineRenderer implements Renderer {
+public class VelocityToolsRenderer implements Renderer {
 
     /**
      * The ToolManager object to use.
@@ -52,7 +54,7 @@ public class VelocityEngineRenderer implements Renderer {
      *
      * @param velocityView The Velocity view manager.
      */
-    public VelocityEngineRenderer(ApplicationContext applicationContext, VelocityEngine velocityEngine) {
+    public VelocityToolsRenderer(ApplicationContext applicationContext, VelocityEngine velocityEngine) {
         this.toolManager = new ToolManager();
         // TODO configuration
         FactoryConfiguration config = ConfigurationUtils.getGenericTools();
@@ -67,7 +69,9 @@ public class VelocityEngineRenderer implements Renderer {
             throw new CannotRenderException("Cannot dispatch a null path");
         }
 
-        Context context = new VelocityRequestContext(request, toolManager.createContext());
+        HashMap<String, Object> toolProps = new HashMap<String, Object>();
+        toolProps.put(ToolContext.LOCALE_KEY, request.getRequestLocale());
+        Context context = new VelocityRequestContext(request, toolManager.createContext(toolProps));
 
         // get the template
         Template template;
