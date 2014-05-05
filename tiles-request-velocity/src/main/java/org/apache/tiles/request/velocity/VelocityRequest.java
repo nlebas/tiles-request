@@ -28,8 +28,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tiles.request.ApplicationContext;
 import org.apache.tiles.request.DefaultRequestWrapper;
+import org.apache.tiles.request.DispatchRequest;
 import org.apache.tiles.request.Request;
+import org.apache.tiles.request.servlet.ServletRequest;
 import org.apache.velocity.context.Context;
 
 /**
@@ -58,6 +64,26 @@ public class VelocityRequest extends DefaultRequestWrapper {
      * The map of the page scope.
      */
     private Map<String, Object> pageScope;
+
+    /**
+     * Factory method to create a Velocity request.
+     *
+     * @param applicationContext The application context.
+     * @param request The request.
+     * @param response The response.
+     * @param velocityContext The Velocity context.
+     * @param writer The writer to write into.
+     * @return The request.
+     */
+    public static VelocityRequest createVelocityRequest(
+            ApplicationContext applicationContext, HttpServletRequest request,
+            HttpServletResponse response, Context velocityContext, Writer writer) {
+        DispatchRequest servletRequest = new ServletRequest(
+                applicationContext, request, response);
+        VelocityRequest velocityRequest = new VelocityRequest(
+                servletRequest, velocityContext, writer);
+        return velocityRequest;
+    }
 
     /**
      * Constructor.
