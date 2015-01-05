@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.tiles.autotag.core.runtime.AutotagRuntime;
 import org.apache.tiles.autotag.core.runtime.ModelBody;
+import org.apache.tiles.request.AbstractRequest;
 import org.apache.tiles.request.ApplicationAccess;
 import org.apache.tiles.request.ApplicationContext;
 import org.apache.tiles.request.Request;
@@ -60,6 +61,7 @@ public class FreemarkerAutotagRuntime implements AutotagRuntime<Request>, Templa
         try {
             Request request = FreemarkerUtil.getAsObject(env.getVariable(Request.class.getName()), Request.class, null);
             if (request != null) {
+                request.getContext(Request.REQUEST_SCOPE).put(AbstractRequest.FORCE_INCLUDE_ATTRIBUTE_NAME, Boolean.TRUE);
                 return new FreemarkerRequestWrapper(request, env);
             } else {
                 ApplicationContext applicationContext = FreemarkerUtil.getAsObject(env.getConfiguration()

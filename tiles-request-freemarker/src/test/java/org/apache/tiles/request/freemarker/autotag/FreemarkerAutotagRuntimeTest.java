@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.tiles.autotag.core.runtime.ModelBody;
+import org.apache.tiles.request.AbstractRequest;
 import org.apache.tiles.request.ApplicationAccess;
 import org.apache.tiles.request.ApplicationContext;
 import org.apache.tiles.request.Request;
@@ -39,6 +40,7 @@ import org.apache.tiles.request.freemarker.FreemarkerRequest;
 import org.apache.tiles.request.freemarker.autotag.FreemarkerAutotagRuntime;
 import org.apache.tiles.request.freemarker.autotag.FreemarkerModelBody;
 import org.junit.Test;
+
 import freemarker.core.Environment;
 import freemarker.core.Macro;
 import freemarker.template.Configuration;
@@ -68,16 +70,19 @@ public class FreemarkerAutotagRuntimeTest {
         ApplicationContext applicationContext = createMock(ApplicationContext.class);
         expect(parentRequest.getApplicationContext()).andReturn(applicationContext);
         expect(parentRequest.getAvailableScopes()).andReturn(Arrays.asList("parent"));
+        Map<String, Object> requestMap = createMock(Map.class);
+        expect(parentRequest.getContext(Request.REQUEST_SCOPE)).andReturn(requestMap);
+        expect(requestMap.put(AbstractRequest.FORCE_INCLUDE_ATTRIBUTE_NAME, Boolean.TRUE)).andReturn(null);
         PrintWriter out = createMock(PrintWriter.class);
         TemplateDirectiveBody body = createMock(TemplateDirectiveBody.class);
-        replay(template, rootDataModel, out, body, parentRequest, applicationContext);
+        replay(template, rootDataModel, out, body, parentRequest, applicationContext, requestMap);
         Environment env = new Environment(template, rootDataModel, out);
         FreemarkerAutotagRuntime runtime = new FreemarkerAutotagRuntime();
         runtime.execute(env, params, new TemplateModel[0], body);
         Request request = runtime.createRequest();
         assertTrue(request instanceof FreemarkerRequest);
         assertEquals(env, ((FreemarkerRequest)request).getEnvironment());
-        verify(template, rootDataModel, out, body, parentRequest, applicationContext);
+        verify(template, rootDataModel, out, body, parentRequest, applicationContext, requestMap);
     }
 
     @Test

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tiles.request.AbstractRequest;
 import org.apache.tiles.request.Request;
 
 import freemarker.template.ObjectWrapper;
