@@ -24,8 +24,10 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+
 import org.apache.tiles.autotag.core.runtime.ModelBody;
 import org.apache.tiles.autotag.core.runtime.AutotagRuntime;
+import org.apache.tiles.request.AbstractRequest;
 import org.apache.tiles.request.Request;
 import org.apache.tiles.request.velocity.VelocityRequest;
 import org.apache.velocity.context.InternalContextAdapter;
@@ -33,6 +35,8 @@ import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.ASTBlock;
 import org.apache.velocity.runtime.parser.node.ASTMap;
 import org.apache.velocity.runtime.parser.node.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Runtime for implementing Velocity Directives.
@@ -41,6 +45,7 @@ public class VelocityAutotagRuntime extends Directive implements AutotagRuntime<
 
     private static Collection<VelocityRequestFactory> requestFactories;
     static {
+    	Logger logger = LoggerFactory.getLogger(VelocityAutotagRuntime.class);
         requestFactories = new ArrayList<VelocityRequestFactory>();
         String[] requestFactoryNames = { //
         "org.apache.tiles.request.velocity.autotag.VelocityViewRequestFactory", //
@@ -50,7 +55,7 @@ public class VelocityAutotagRuntime extends Directive implements AutotagRuntime<
             try {
                 requestFactories.add((VelocityRequestFactory) Class.forName(className).newInstance());
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.info("Missing dependencies for {}, the feature will be unavailable", className);
             }
         }
     }

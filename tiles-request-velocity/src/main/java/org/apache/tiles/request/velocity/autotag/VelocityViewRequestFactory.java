@@ -27,8 +27,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tiles.request.AbstractRequest;
 import org.apache.tiles.request.ApplicationAccess;
 import org.apache.tiles.request.ApplicationContext;
+import org.apache.tiles.request.Request;
 import org.apache.tiles.request.servlet.ServletRequest;
 import org.apache.tiles.request.velocity.VelocityRequest;
 import org.apache.velocity.context.Context;
@@ -55,6 +57,7 @@ public class VelocityViewRequestFactory implements VelocityRequestFactory {
             ApplicationContext applicationContext = (ApplicationContext) servletContext
                     .getAttribute(ApplicationAccess.APPLICATION_CONTEXT_ATTRIBUTE);
             ServletRequest servletRequest = new ServletRequest(applicationContext, request, response);
+            request.setAttribute(AbstractRequest.FORCE_INCLUDE_ATTRIBUTE_NAME, Boolean.TRUE);
             VelocityRequest velocityRequest = new VelocityRequest(servletRequest, context, writer);
             return velocityRequest;
         } else {
