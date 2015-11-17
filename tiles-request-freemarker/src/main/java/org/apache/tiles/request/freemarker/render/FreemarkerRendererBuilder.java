@@ -32,7 +32,9 @@ import org.apache.tiles.request.freemarker.FreemarkerRequestException;
  * Builds instances of {@link FreemarkerRenderer}.
  *
  * @version $Rev$ $Date$
+ * @deprecated Directly create a freemarker Configuration object instead.
  */
+@Deprecated
 public final class FreemarkerRendererBuilder {
 
     /**
@@ -92,7 +94,9 @@ public final class FreemarkerRendererBuilder {
         AttributeValueFreemarkerServlet servlet = new AttributeValueFreemarkerServlet();
         try {
             servlet.init(new InitParamsServletConfig(params, applicationContext));
-            return new FreemarkerRenderer(servlet);
+            FreemarkerRenderer renderer = new FreemarkerRenderer();
+            renderer.setConfiguration(servlet.getConfiguration());
+            return renderer;
         } catch (ServletException e) {
             throw new FreemarkerRequestException(
                     "Cannot initialize internal servlet", e);

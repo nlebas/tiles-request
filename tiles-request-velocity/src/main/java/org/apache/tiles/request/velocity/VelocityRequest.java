@@ -21,7 +21,6 @@
 
 package org.apache.tiles.request.velocity;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -29,17 +28,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tiles.request.AbstractViewRequest;
 import org.apache.tiles.request.ApplicationContext;
+import org.apache.tiles.request.DefaultRequestWrapper;
 import org.apache.tiles.request.DispatchRequest;
-import org.apache.tiles.request.servlet.ExternalWriterHttpServletResponse;
+import org.apache.tiles.request.Request;
 import org.apache.tiles.request.servlet.ServletRequest;
-import org.apache.tiles.request.servlet.ServletUtil;
 import org.apache.velocity.context.Context;
 
 /**
@@ -47,7 +43,7 @@ import org.apache.velocity.context.Context;
  *
  * @version $Rev$ $Date$
  */
-public class VelocityRequest extends AbstractViewRequest {
+public class VelocityRequest extends DefaultRequestWrapper {
 
     /**
      * The native available scopes, in fact only "page".
@@ -96,8 +92,7 @@ public class VelocityRequest extends AbstractViewRequest {
      * @param ctx The Velocity current context.
      * @param writer The writer to use to render the response. It may be null, if not necessary.
      */
-    public VelocityRequest(
-            DispatchRequest enclosedRequest, Context ctx, Writer writer) {
+    public VelocityRequest(Request enclosedRequest, Context ctx, Writer writer) {
         super(enclosedRequest);
         List<String> scopes = new ArrayList<String>();
         scopes.addAll(enclosedRequest.getAvailableScopes());
@@ -114,33 +109,9 @@ public class VelocityRequest extends AbstractViewRequest {
 
     /** {@inheritDoc} */
     @Override
-    protected void doInclude(String path) throws IOException {
-        ServletRequest servletRequest = org.apache.tiles.request.servlet.ServletUtil.getServletRequest(this);
-        HttpServletRequest request = servletRequest.getRequest();
-        HttpServletResponse response = servletRequest.getResponse();
-        RequestDispatcher rd = request.getRequestDispatcher(path);
-
-        if (rd == null) {
-            throw new IOException("No request dispatcher returned for path '"
-                    + path + "'");
-        }
-
-        PrintWriter printWriter = getPrintWriter();
-        try {
-            rd.include(request, new ExternalWriterHttpServletResponse(response,
-                    printWriter));
-        } catch (ServletException ex) {
-            throw ServletUtil.wrapServletException(ex, "ServletException including path '"
-                    + path + "'.");
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public PrintWriter getPrintWriter() {
         if (writer == null) {
-            throw new IllegalStateException(
-                    "A writer-less Tiles request has been created, cannot return a PrintWriter");
+            throw new IllegalStateException("A writer-less Tiles request has been created, cannot return a PrintWriter");
         }
         if (writer instanceof PrintWriter) {
             return (PrintWriter) writer;
@@ -152,8 +123,7 @@ public class VelocityRequest extends AbstractViewRequest {
     @Override
     public Writer getWriter() {
         if (writer == null) {
-            throw new IllegalStateException(
-                    "A writer-less Tiles request has been created, cannot return a PrintWriter");
+            throw new IllegalStateException("A writer-less Tiles request has been created, cannot return a PrintWriter");
         }
         return writer;
     }
@@ -175,4 +145,8 @@ public class VelocityRequest extends AbstractViewRequest {
         return "page".equals(scope) ? getPageScope() : super.getContext(scope);
     }
 
+    public Context getVelocityContext() {
+        return ctx;
+    }
+    
 }

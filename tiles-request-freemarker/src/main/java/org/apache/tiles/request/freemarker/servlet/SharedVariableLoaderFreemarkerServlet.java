@@ -23,17 +23,26 @@ package org.apache.tiles.request.freemarker.servlet;
 
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tiles.request.freemarker.render.RequestHashModel;
 import org.apache.tiles.request.reflect.ClassUtil;
+import org.apache.tiles.request.servlet.ServletRequest;
+import org.apache.tiles.request.servlet.ServletUtil;
 
 import freemarker.cache.TemplateLoader;
 import freemarker.ext.servlet.FreemarkerServlet;
 import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
 
 /**
  * Extends FreemarkerServlet to load Tiles directives as a shared variable.
@@ -42,7 +51,7 @@ import freemarker.template.Configuration;
  */
 public class SharedVariableLoaderFreemarkerServlet extends FreemarkerServlet {
 
-    /**
+	/**
      * The serial UID.
      */
     private static final long serialVersionUID = 4301098067909854507L;
@@ -80,6 +89,17 @@ public class SharedVariableLoaderFreemarkerServlet extends FreemarkerServlet {
         super.init(new ExcludingParameterServletConfig(config));
     }
 
+    @Override
+    protected TemplateModel createModel(ObjectWrapper wrapper, ServletContext servletContext,
+            HttpServletRequest request, HttpServletResponse response) throws TemplateModelException {
+        RequestHashModel result = new RequestHashModel(wrapper, 
+        		new ServletRequest(
+        			ServletUtil.getApplicationContext(getServletContext()),
+        			request,
+        			response));
+        return result;
+    }
+
     /**
      * Adds anew shared variable factory in a manual way.
      *
@@ -107,6 +127,12 @@ public class SharedVariableLoaderFreemarkerServlet extends FreemarkerServlet {
     protected TemplateLoader createTemplateLoader(String templatePath) {
         return new WebappClassTemplateLoader(getServletContext());
     }
+
+    @Override
+	protected Locale deduceLocale(String templatePath,
+			HttpServletRequest request, HttpServletResponse response) {
+		return request.getLocale();
+	}
 
     /**
      * Servlet configuration that excludes some parameters. It is useful to adapt to

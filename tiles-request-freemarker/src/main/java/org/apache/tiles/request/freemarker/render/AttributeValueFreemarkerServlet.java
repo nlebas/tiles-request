@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.tiles.request.freemarker.servlet.SharedVariableLoaderFreemarkerServlet;
 
+import freemarker.template.Configuration;
+
 /**
  * Extends {@link SharedVariableLoaderFreemarkerServlet} to use the attribute value as the template name.
  */
@@ -52,5 +54,10 @@ public class AttributeValueFreemarkerServlet extends SharedVariableLoaderFreemar
     @Override
     protected String requestUrlToTemplatePath(HttpServletRequest request) {
         return valueHolder.get();
+    }
+
+    @Override
+    public Configuration getConfiguration() {
+        return super.getConfiguration();
     }
 }

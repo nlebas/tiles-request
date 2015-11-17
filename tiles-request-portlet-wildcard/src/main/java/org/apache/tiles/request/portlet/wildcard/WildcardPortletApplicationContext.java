@@ -108,6 +108,8 @@ public class WildcardPortletApplicationContext extends PortletApplicationContext
                 try {
                     url = resources[i].getURL();
                     resourceList.add(new URLApplicationResource(url.toExternalForm(), url));
+                } catch (FileNotFoundException e) {
+                    // the resource does not exist: ignore it
                 } catch (IOException e) {
                     // the resource does not exist: ignore it
                 }

@@ -22,12 +22,16 @@ package org.apache.tiles.request.velocity.autotag;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
+
 import java.io.Writer;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.tiles.autotag.core.runtime.ModelBody;
+import org.apache.tiles.request.AbstractRequest;
 import org.apache.tiles.request.ApplicationAccess;
 import org.apache.tiles.request.ApplicationContext;
 import org.apache.tiles.request.Request;
@@ -55,6 +59,7 @@ public class VelocityAutotagRuntimeTest {
 
         expect(context.getInternalUserContext()).andReturn(viewContext);
         expect(viewContext.getRequest()).andReturn(request);
+        request.setAttribute(AbstractRequest.FORCE_INCLUDE_ATTRIBUTE_NAME, Boolean.TRUE);
         expect(viewContext.getResponse()).andReturn(response);
         expect(viewContext.getServletContext()).andReturn(servletContext);
         expect(servletContext.getAttribute(ApplicationAccess.APPLICATION_CONTEXT_ATTRIBUTE)).andReturn(applicationContext);
