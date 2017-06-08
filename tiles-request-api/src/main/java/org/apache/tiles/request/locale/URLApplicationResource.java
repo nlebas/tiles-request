@@ -42,8 +42,6 @@ public class URLApplicationResource extends PostfixedApplicationResource {
     private URL url;
     /** if the URL matches a file, this is the file. */
     private File file;
-    /** if the URL points into an OSGi bundle, this is true */
-    private boolean bundle;
 
     /**
      * Creates a URLApplicationResource for the specified path that can be accessed through the specified URL.
@@ -56,8 +54,6 @@ public class URLApplicationResource extends PostfixedApplicationResource {
         this.url = url;
         if ("file".equals(url.getProtocol())) {
             file = getFile(url);
-        } else {
-            bundle = checkBundle(url);
         }
     }
 
@@ -73,27 +69,6 @@ public class URLApplicationResource extends PostfixedApplicationResource {
         this.url = url;
         if ("file".equals(url.getProtocol())) {
             file = getFile(url);
-        } else {
-            bundle = checkBundle(url);
-        }
-    }
-
-    private static boolean checkBundle(URL url) {
-        try {
-            URL manifestUrl = new URL(url.toExternalForm().replace(url.getFile(), "/META-INF/MANIFEST.MF"));
-            InputStream in = manifestUrl.openStream();
-            try {
-                return new Manifest(in).getMainAttributes().getValue("Bundle-SymbolicName") != null;
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    LOG.debug("Manifest could not be closed properly", e);
-                }
-            }
-        } catch (IOException e) {
-            LOG.debug("No manifest found", e);
-            return false;
         }
     }
 
@@ -113,13 +88,17 @@ public class URLApplicationResource extends PostfixedApplicationResource {
             // If the url points into a bundle but the resource cannot be
             // opened means, that the resource actually does not exist. In this
             // case throw a FileNotFoundException, see
-            if (bundle) {
+            if (urlIsLocalFile(url)) {
                 throw new FileNotFoundException(url.toString());
             }
             throw e;
         }
     }
     
+    private static boolean urlIsLocalFile(URL url) {
+	return "bundle".equals(url.getProtocol());
+    }
+
     /** {@inheritDoc} */
     @Override
     public InputStream getInputStream() throws IOException {
